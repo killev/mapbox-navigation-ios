@@ -124,7 +124,7 @@ extension NSAttributedString.Key {
 }
 
 /// Provides appropriately formatted, localized descriptions of linear distances.
-@objc(MBDistanceFormatter)
+
 open class DistanceFormatter: LengthFormatter {
     /// True to favor brevity over precision.
     var approx: Bool
@@ -162,7 +162,7 @@ open class DistanceFormatter: LengthFormatter {
      
      - parameter approximate: approximates the distances.
      */
-    @objc public init(approximate: Bool = false) {
+    public init(approximate: Bool = false) {
         self.approx = approximate
         super.init()
         self.numberFormatter.locale = .nationalizedCurrent
@@ -193,7 +193,7 @@ open class DistanceFormatter: LengthFormatter {
      
      The user’s `Locale` is used here to set the units.
     */
-    @objc public func string(from distance: CLLocationDistance) -> String {
+    public func string(from distance: CLLocationDistance) -> String {
         numberFormatter.positivePrefix = ""
         numberFormatter.positiveSuffix = ""
         numberFormatter.decimalSeparator = nonFractionalLengthFormatter.numberFormatter.decimalSeparator
@@ -202,7 +202,7 @@ open class DistanceFormatter: LengthFormatter {
         return formattedDistance(distance)
     }
     
-    @objc open override func string(fromMeters numberInMeters: Double) -> String {
+    open override func string(fromMeters numberInMeters: Double) -> String {
         return self.string(from: numberInMeters)
     }
     
@@ -215,7 +215,7 @@ open class DistanceFormatter: LengthFormatter {
     }
     
     @available(iOS 10.0, *)
-    @objc(measurementOfDistance:)
+    
     public func measurement(of distance: CLLocationDistance) -> Measurement<UnitLength> {
         let threshold = self.threshold(for: distance)
         return threshold.measurement(of: distance)
@@ -226,7 +226,7 @@ open class DistanceFormatter: LengthFormatter {
      
      `NSAttributedStringKey.quantity` is applied to the numeric quantity.
      */
-    @objc open override func attributedString(for obj: Any, withDefaultAttributes attrs: [NSAttributedString.Key : Any]? = nil) -> NSAttributedString? {
+    open override func attributedString(for obj: Any, withDefaultAttributes attrs: [NSAttributedString.Key : Any]? = nil) -> NSAttributedString? {
         guard let distance = obj as? CLLocationDistance else {
             return nil
         }
