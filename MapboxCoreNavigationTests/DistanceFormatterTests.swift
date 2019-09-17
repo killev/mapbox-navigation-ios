@@ -2,7 +2,7 @@ import XCTest
 import CoreLocation
 @testable import MapboxCoreNavigation
 
-let oneMile: CLLocationDistance = .metersPerMile
+let oneMile: CLLocationDistance = 1_609.344
 let oneYard: CLLocationDistance = 0.9144
 let oneFeet: CLLocationDistance = 0.3048
 
@@ -158,11 +158,5 @@ class DistanceFormatterTests: XCTestCase {
         assertDistance(3_000,   displayed: "३ कि॰मी॰",      quantity: "३")
         assertDistance(3_500,   displayed: "४ कि॰मी॰",      quantity: "४")
         assertDistance(384_400_000, displayed: "३,८४,४०० कि॰मी॰", quantity: "३,८४,४००")
-    }
-    
-    func testInches() {
-        let oneMeter: CLLocationDistance = 1
-        let oneMeterInInches = oneMeter.converted(to: .inch)
-        XCTAssertEqual(oneMeterInInches, 39.3700787, accuracy: 0.00001)
     }
 }
