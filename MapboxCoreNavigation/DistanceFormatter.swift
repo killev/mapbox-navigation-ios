@@ -30,8 +30,6 @@ extension NSAttributedString.Key {
 /// Provides appropriately formatted, localized descriptions of linear distances.
 @objc(MBDistanceFormatter)
 open class DistanceFormatter: LengthFormatter {
-    let nonFractionalLengthFormatter = LengthFormatter()
-    
     let measurementFormatter: MeasurementFormatter = {
         let formatter = MeasurementFormatter()
         formatter.locale = .nationalizedCurrent
@@ -49,9 +47,6 @@ open class DistanceFormatter: LengthFormatter {
             numberFormatter.locale = newValue
         }
     }
-    
-    /// Indicates the most recently used unit
-    public private(set) var unit: LengthFormatter.Unit = .millimeter
 
     // Rounding tables for metric, imperial, and UK measurement systems. The last threshold is used as a default.
     lazy var roundingTableMetric: RoundingTable = {
