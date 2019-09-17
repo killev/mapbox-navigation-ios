@@ -20,7 +20,7 @@ class DistanceFormatterTests: XCTestCase {
         XCTAssertEqual(displayedString, displayed, "Displayed: '\(displayedString)' should be equal to \(displayed)")
         
         let value = distanceFormatter.measurement(of: distance).value
-        XCTAssertEqual(distanceFormatter.numberFormatter.string(from: value as NSNumber), quantity)
+        XCTAssertEqual(distanceFormatter.measurementFormatter.numberFormatter.string(from: value as NSNumber), quantity)
         
         let attributedString = distanceFormatter.attributedString(for: distance as NSNumber)
         XCTAssertEqual(attributedString?.string, displayed, "Displayed: '\(attributedString?.string ?? "")' should be equal to \(displayed)")
@@ -85,8 +85,8 @@ class DistanceFormatterTests: XCTestCase {
         assertDistance(999,     displayed: "1 km",      quantity: "1")
         assertDistance(1000,    displayed: "1 km",      quantity: "1")
         assertDistance(1001,    displayed: "1 km",      quantity: "1")
-        assertDistance(2_500,   displayed: "2.5 km",    quantity: "2.5")
-        assertDistance(2_900,   displayed: "2.9 km",    quantity: "2.9")
+        assertDistance(2_500,   displayed: "2,5 km",    quantity: "2,5")
+        assertDistance(2_900,   displayed: "2,9 km",    quantity: "2,9")
         assertDistance(3_000,   displayed: "3 km",      quantity: "3")
         assertDistance(3_500,   displayed: "4 km",      quantity: "4")
     }
