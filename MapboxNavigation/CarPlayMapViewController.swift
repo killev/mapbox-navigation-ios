@@ -198,11 +198,10 @@ public class CarPlayMapViewController: UIViewController {
         var edgePadding = view.safeArea
         edgePadding += NavigationMapView.defaultPadding
         
-        if let userCourseView = mapView.userCourseView {
-            let midX = userCourseView.bounds.midX
-            let midY = userCourseView.bounds.midY
-            edgePadding += UIEdgeInsets(top: midY, left: midX, bottom: midY, right: midX)
-        }
+        let userCourseView = mapView.userCourseView
+        let midX = userCourseView.bounds.midX
+        let midY = userCourseView.bounds.midY
+        edgePadding += UIEdgeInsets(top: midY, left: midX, bottom: midY, right: midX)
         
         mapView.setContentInset(edgePadding, animated: false, completionHandler: nil)
         

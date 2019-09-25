@@ -116,7 +116,7 @@ open class NavigationMapView: MGLMapView, UIGestureRecognizerDelegate {
     open override var showsUserLocation: Bool {
         get {
             if tracksUserCourse || userLocationForCourseTracking != nil {
-                return !(userCourseView?.isHidden ?? true)
+                return !(userCourseView.isHidden)
             }
             return super.showsUserLocation
         }
@@ -124,12 +124,9 @@ open class NavigationMapView: MGLMapView, UIGestureRecognizerDelegate {
             if tracksUserCourse || userLocationForCourseTracking != nil {
                 super.showsUserLocation = false
                 
-                if userCourseView == nil {
-                    userCourseView = UserPuckCourseView(frame: CGRect(origin: .zero, size: CGSize(width: 75, height: 75)))
-                }
-                userCourseView?.isHidden = !newValue
+                userCourseView.isHidden = !newValue
             } else {
-                userCourseView?.isHidden = true
+                userCourseView.isHidden = true
                 super.showsUserLocation = newValue
             }
         }
@@ -154,7 +151,7 @@ open class NavigationMapView: MGLMapView, UIGestureRecognizerDelegate {
         var contentFrame = bounds.inset(by: safeArea).inset(by: contentInset)
         
         // Avoid letting the puck go partially off-screen, and add a comfortable padding beyond that.
-        let courseViewBounds = userCourseView?.bounds ?? .zero
+        let courseViewBounds = userCourseView.bounds
         contentFrame = contentFrame.insetBy(dx: min(NavigationMapView.courseViewMinimumInsets.left + courseViewBounds.width / 2.0, contentFrame.width / 2.0),
                                             dy: min(NavigationMapView.courseViewMinimumInsets.top + courseViewBounds.height / 2.0, contentFrame.height / 2.0))
         
@@ -183,22 +180,26 @@ open class NavigationMapView: MGLMapView, UIGestureRecognizerDelegate {
         }
     }
 
+
     /**
-     A `UIView` used to indicate the user’s location and course on the map.
+     A type that represents a `UIView` that is `CourseUpdatable`.
+    */
+    public typealias UserCourseView = UIView & CourseUpdatable
+    
+    /**
+     A `UserCourseView` used to indicate the user’s location and course on the map.
      
-     If the view conforms to `UserCourseView`, its `UserCourseView.update(location:pitch:direction:animated:)` method is frequently called to ensure that its visual appearance matches the map’s camera.
+     The `UserCourseView`'s `UserCourseView.update(location:pitch:direction:animated:)` method is frequently called to ensure that its visual appearance matches the map’s camera.
      */
-    public var userCourseView: UserCourseView? {
+    public var userCourseView: UserCourseView = UserPuckCourseView(frame: CGRect(origin: .zero, size: 75.0)) {
         didSet {
-            oldValue?.removeFromSuperview()
-            if let userCourseView = userCourseView {
-                if let location = userLocationForCourseTracking {
-                    updateCourseTracking(location: location, animated: false)
-                } else {
-                    userCourseView.center = userAnchorPoint
-                }
-                addSubview(userCourseView)
+            oldValue.removeFromSuperview()
+            if let location = userLocationForCourseTracking {
+                updateCourseTracking(location: location, animated: false)
+            } else {
+                userCourseView.center = userAnchorPoint
             }
+            addSubview(userCourseView)
         }
     }
     
@@ -275,7 +276,7 @@ open class NavigationMapView: MGLMapView, UIGestureRecognizerDelegate {
         guard shouldPositionCourseViewFrameByFrame else { return }
         guard let location = userLocationForCourseTracking else { return }
         
-        userCourseView?.center = convert(location.coordinate, toPointTo: self)
+        userCourseView.center = convert(location.coordinate, toPointTo: self)
     }
     
     /**
@@ -340,16 +341,16 @@ open class NavigationMapView: MGLMapView, UIGestureRecognizerDelegate {
             let point = userAnchorPoint
             let padding = UIEdgeInsets(top: point.y, left: point.x, bottom: bounds.height - point.y, right: bounds.width - point.x)
             setCamera(newCamera, withDuration: duration, animationTimingFunction: function, edgePadding: padding, completionHandler: nil)
-            userCourseView?.center = userAnchorPoint
+            userCourseView.center = userAnchorPoint
         } else {
             // Animate course view updates in overview mode
             UIView.animate(withDuration: duration, delay: 0, options: [.curveLinear], animations: { [weak self] in
                 guard let point = self?.convert(location.coordinate, toPointTo: self) else { return }
-                self?.userCourseView?.center = point
+                self?.userCourseView.center = point
             })
         }
         
-        userCourseView?.update(location: location, pitch: self.camera.pitch, direction: direction, animated: animated, tracksUserCourse: tracksUserCourse)
+        userCourseView.update(location: location, pitch: self.camera.pitch, direction: direction, animated: animated, tracksUserCourse: tracksUserCourse)
     }
     
     //MARK: -  Gesture Recognizers
@@ -397,15 +398,13 @@ open class NavigationMapView: MGLMapView, UIGestureRecognizerDelegate {
         if sender.state == .changed {
             guard let location = userLocationForCourseTracking else { return }
             
-            if let userCourseView = userCourseView {
-                userCourseView.update(location: location,
-                                       pitch: camera.pitch,
-                                       direction: direction,
-                                       animated: false,
-                                       tracksUserCourse: tracksUserCourse)
-                
-                userCourseView.center = convert(location.coordinate, toPointTo: self)
-            }
+            userCourseView.update(location: location,
+                                  pitch: camera.pitch,
+                                  direction: direction,
+                                  animated: false,
+                                  tracksUserCourse: tracksUserCourse)
+            
+            userCourseView.center = convert(location.coordinate, toPointTo: self)
         }
     }
     
